@@ -42,16 +42,19 @@ router.patch('/tasks/:id', async (req, res) => {
     const allowedUpdates = ['description', 'isCompleted']
     const isVerifiedOperation = updates.every((update) => allowedUpdates.includes(update))
 
-    console.log(updates)
     if (updates.length == 0 || !isVerifiedOperation) {
         return res.status(400).send('Invalid updates!')
     }
 
     try {
-        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, age: 4 })
-        if (!task) {
-            return res.status(404).send('Not Found!')
-        }
+        const task = await Task.findById(req.params.id)
+        updates.forEach((update) => task[update] = req.body[update])
+        await task.save()
+
+        // const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, age: 4 })
+        // if (!task) {
+        //     return res.status(404).send('Not Found!')
+        // }
 
         return res.status(200).send(task)
     } catch (e) {
