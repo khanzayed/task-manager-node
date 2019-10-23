@@ -11,7 +11,7 @@ router.post('/users', async (req, res) => {
         const { name, age } = user
 
         await user.save()
-        res.status(200).send({ name, age, token })
+        res.status(200).send({ user, token })
     } catch (e) {
         res.status(400).send(error)
     }
